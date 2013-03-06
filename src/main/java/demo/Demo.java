@@ -1,10 +1,12 @@
 package demo;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -12,7 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- *
  * User: undancer
  * Date: 13-3-4
  * Time: 下午6:58
@@ -49,9 +50,18 @@ public class Demo {
         }
     };
 
+    public static List<String> readLines(URL url) {            // JAVA7语法
+        try (InputStream is = url.openStream()) {
+            return IOUtils.readLines(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Lists.newArrayList();
+    }
+
     public static void main(String[] args) {
         try {
-            List<String> lines = IOUtils.readLines(new URL(url).openStream());  //从服务器获取数据
+            List<String> lines = readLines(new URL(url));                       //从服务器获取数据
             for (String line : lines) {                                         //逐行处理
                 String[] elements = StringUtils.split(line, ' ');               //拆分元素
                 Arrays.sort(elements, customComparator);                        //排序
@@ -59,8 +69,7 @@ public class Demo {
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
+
 }
